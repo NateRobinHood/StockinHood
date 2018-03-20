@@ -1,10 +1,11 @@
-﻿using IEXRESTDAL.Data_Objects;
+﻿using IEXRESTDAL.DataObjects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -168,6 +169,20 @@ namespace IEXRESTDAL
             return null;
         }
 
+        public static IEX_Stats GetKeyStats(string symbol)
+        {
+            string RequestUri = string.Format("https://api.iextrading.com/1.0/stock/{0}/stats", symbol);
+            string content = MakeRequest(RequestUri);
+            if (!string.IsNullOrEmpty(content))
+            {
+                IEX_Stats contentData = JsonConvert.DeserializeObject<IEX_Stats>(content);
+
+                return contentData;
+            }
+
+            return null;
+        }
+
 
 
         private static string MakeRequest(string uri)
@@ -197,13 +212,15 @@ namespace IEXRESTDAL
             }
             catch (WebException ex)
             {
-                if (ex.Response is HttpWebResponse response)
+                if (ex.Response is HttpWebResponse)
                 {
+                    HttpWebResponse response = ex.Response as HttpWebResponse;
                     string exMessage = string.Format("Failed request to {0} with reponse code {1}", uri, response.StatusCode);
                     throw new Exception(exMessage); //eventually want to type this
                 }
-                if (ex.InnerException is System.Net.Sockets.SocketException sockEx)
+                if (ex.InnerException is SocketException)
                 {
+                    SocketException sockEx = ex.InnerException as SocketException;
                     string exMessage = string.Format("Failed request to {0} with socket error code {1} and message {2}", uri, sockEx.SocketErrorCode, sockEx.Message);
                     throw new Exception(exMessage); //eventually want to type this
                 }

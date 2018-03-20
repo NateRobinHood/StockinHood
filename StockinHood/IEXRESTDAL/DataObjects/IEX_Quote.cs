@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IEXRESTDAL.Data_Objects
+namespace IEXRESTDAL.DataObjects
 {
     public class IEX_Quote
     {
