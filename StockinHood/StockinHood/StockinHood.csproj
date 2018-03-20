@@ -46,11 +46,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\ColorManager.cs" />
+    <Compile Include="Components\ToolStripComponents.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Resources\ResourceManager.cs" />
     <Compile Include="UserControls\KeyStatsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UserControls\KeyStatsPanel.Designer.cs">
       <DependentUpon>KeyStatsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\QuotePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\QuotePanel.Designer.cs">
+      <DependentUpon>QuotePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\QuotesBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\QuotesBox.Designer.cs">
+      <DependentUpon>QuotesBox.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControls\StatItem.cs">
       <SubType>UserControl</SubType>
@@ -79,8 +96,17 @@
     <EmbeddedResource Include="UserControls\KeyStatsPanel.resx">
       <DependentUpon>KeyStatsPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\QuotePanel.resx">
+      <DependentUpon>QuotePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\QuotesBox.resx">
+      <DependentUpon>QuotesBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\StatItem.resx">
       <DependentUpon>StatItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowMain.resx">
+      <DependentUpon>WindowMain.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -95,6 +121,19 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\IEXRESTDAL\IEXRESTDAL.csproj">
+      <Project>{3D6A2C36-3F3D-4FF0-B45E-829FD58C90DF}</Project>
+      <Name>IEXRESTDAL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\GainsArrow.png" />
+    <EmbeddedResource Include="Resources\LossesArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CollapseIcon.png" />
+    <EmbeddedResource Include="Resources\ExpandIcon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
