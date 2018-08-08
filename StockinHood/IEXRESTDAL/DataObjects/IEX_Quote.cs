@@ -17,8 +17,8 @@ namespace IEXRESTDAL.DataObjects
         public double openTime { get; set; }
         public double close { get; set; }
         public double closeTime { get; set; }
-        public double high { get; set; }
-        public double low { get; set; }
+        public double? high { get; set; }
+        public double? low { get; set; }
         public double latestPrice { get; set; }
         public string latestSource { get; set; }
         public string latestTime { get; set; }
@@ -40,7 +40,7 @@ namespace IEXRESTDAL.DataObjects
         public double iexAskPrice { get; set; }
         public double iexAskSize { get; set; }
         public double marketCap { get; set; }
-        public double peRatio { get; set; }
+        public double? peRatio { get; set; }
         public double week52High { get; set; }
         public double week52Low { get; set; }
         public double ytdChange { get; set; }

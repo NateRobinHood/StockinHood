@@ -37,40 +37,47 @@
             this.lblHigh = new System.Windows.Forms.Label();
             this.lblVolume = new System.Windows.Forms.Label();
             this.lblAvgVolume = new System.Windows.Forms.Label();
+            this.layoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
+            this.layoutPanelMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblSymbol
             // 
-            this.lblSymbol.Location = new System.Drawing.Point(2, 6);
+            this.lblSymbol.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblSymbol.Location = new System.Drawing.Point(3, 0);
             this.lblSymbol.Name = "lblSymbol";
-            this.lblSymbol.Size = new System.Drawing.Size(51, 23);
+            this.lblSymbol.Size = new System.Drawing.Size(56, 35);
             this.lblSymbol.TabIndex = 0;
             this.lblSymbol.Text = "Symbol";
             this.lblSymbol.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPrice
             // 
-            this.lblPrice.Location = new System.Drawing.Point(59, 6);
+            this.lblPrice.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPrice.Location = new System.Drawing.Point(65, 0);
             this.lblPrice.Name = "lblPrice";
-            this.lblPrice.Size = new System.Drawing.Size(51, 23);
+            this.lblPrice.Size = new System.Drawing.Size(56, 35);
             this.lblPrice.TabIndex = 1;
             this.lblPrice.Text = "Price";
             this.lblPrice.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblChange
             // 
-            this.lblChange.Location = new System.Drawing.Point(116, 6);
+            this.lblChange.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblChange.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblChange.Location = new System.Drawing.Point(127, 0);
             this.lblChange.Name = "lblChange";
-            this.lblChange.Size = new System.Drawing.Size(51, 23);
+            this.lblChange.Size = new System.Drawing.Size(56, 35);
             this.lblChange.TabIndex = 2;
             this.lblChange.Text = "Change";
             this.lblChange.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPercentChange
             // 
-            this.lblPercentChange.Location = new System.Drawing.Point(173, 6);
+            this.lblPercentChange.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPercentChange.Location = new System.Drawing.Point(189, 0);
             this.lblPercentChange.Name = "lblPercentChange";
-            this.lblPercentChange.Size = new System.Drawing.Size(51, 23);
+            this.lblPercentChange.Size = new System.Drawing.Size(56, 35);
             this.lblPercentChange.TabIndex = 3;
             this.lblPercentChange.Text = "% Delta";
             this.lblPercentChange.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -78,7 +85,7 @@
             // cmdMoreInfo
             // 
             this.cmdMoreInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmdMoreInfo.Location = new System.Drawing.Point(460, 5);
+            this.cmdMoreInfo.Location = new System.Drawing.Point(510, 5);
             this.cmdMoreInfo.Name = "cmdMoreInfo";
             this.cmdMoreInfo.Size = new System.Drawing.Size(26, 26);
             this.cmdMoreInfo.TabIndex = 4;
@@ -88,55 +95,80 @@
             // 
             // lblLow
             // 
-            this.lblLow.Location = new System.Drawing.Point(230, 6);
+            this.lblLow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblLow.Location = new System.Drawing.Point(251, 0);
             this.lblLow.Name = "lblLow";
-            this.lblLow.Size = new System.Drawing.Size(51, 23);
+            this.lblLow.Size = new System.Drawing.Size(56, 35);
             this.lblLow.TabIndex = 5;
             this.lblLow.Text = "Low";
             this.lblLow.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblHigh
             // 
-            this.lblHigh.Location = new System.Drawing.Point(287, 6);
+            this.lblHigh.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblHigh.Location = new System.Drawing.Point(313, 0);
             this.lblHigh.Name = "lblHigh";
-            this.lblHigh.Size = new System.Drawing.Size(51, 23);
+            this.lblHigh.Size = new System.Drawing.Size(56, 35);
             this.lblHigh.TabIndex = 6;
             this.lblHigh.Text = "High";
             this.lblHigh.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblVolume
             // 
-            this.lblVolume.Location = new System.Drawing.Point(344, 6);
+            this.lblVolume.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblVolume.Location = new System.Drawing.Point(375, 0);
             this.lblVolume.Name = "lblVolume";
-            this.lblVolume.Size = new System.Drawing.Size(51, 23);
+            this.lblVolume.Size = new System.Drawing.Size(56, 35);
             this.lblVolume.TabIndex = 7;
             this.lblVolume.Text = "Volume";
             this.lblVolume.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAvgVolume
             // 
-            this.lblAvgVolume.Location = new System.Drawing.Point(401, 6);
+            this.lblAvgVolume.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAvgVolume.Location = new System.Drawing.Point(437, 0);
             this.lblAvgVolume.Name = "lblAvgVolume";
-            this.lblAvgVolume.Size = new System.Drawing.Size(51, 23);
+            this.lblAvgVolume.Size = new System.Drawing.Size(60, 35);
             this.lblAvgVolume.TabIndex = 8;
             this.lblAvgVolume.Text = "Avg Vol";
             this.lblAvgVolume.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // layoutPanelMain
+            // 
+            this.layoutPanelMain.ColumnCount = 8;
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.layoutPanelMain.Controls.Add(this.lblSymbol, 0, 0);
+            this.layoutPanelMain.Controls.Add(this.lblAvgVolume, 7, 0);
+            this.layoutPanelMain.Controls.Add(this.lblPrice, 1, 0);
+            this.layoutPanelMain.Controls.Add(this.lblVolume, 6, 0);
+            this.layoutPanelMain.Controls.Add(this.lblChange, 2, 0);
+            this.layoutPanelMain.Controls.Add(this.lblHigh, 5, 0);
+            this.layoutPanelMain.Controls.Add(this.lblPercentChange, 3, 0);
+            this.layoutPanelMain.Controls.Add(this.lblLow, 4, 0);
+            this.layoutPanelMain.Location = new System.Drawing.Point(0, 0);
+            this.layoutPanelMain.Margin = new System.Windows.Forms.Padding(0);
+            this.layoutPanelMain.Name = "layoutPanelMain";
+            this.layoutPanelMain.RowCount = 1;
+            this.layoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutPanelMain.Size = new System.Drawing.Size(500, 35);
+            this.layoutPanelMain.TabIndex = 9;
             // 
             // QuotePanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lblAvgVolume);
-            this.Controls.Add(this.lblVolume);
-            this.Controls.Add(this.lblHigh);
-            this.Controls.Add(this.lblLow);
+            this.Controls.Add(this.layoutPanelMain);
             this.Controls.Add(this.cmdMoreInfo);
-            this.Controls.Add(this.lblPercentChange);
-            this.Controls.Add(this.lblChange);
-            this.Controls.Add(this.lblPrice);
-            this.Controls.Add(this.lblSymbol);
             this.Name = "QuotePanel";
-            this.Size = new System.Drawing.Size(495, 35);
+            this.Size = new System.Drawing.Size(545, 35);
+            this.layoutPanelMain.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -152,5 +184,6 @@
         private System.Windows.Forms.Label lblHigh;
         private System.Windows.Forms.Label lblVolume;
         private System.Windows.Forms.Label lblAvgVolume;
+        private System.Windows.Forms.TableLayoutPanel layoutPanelMain;
     }
 }

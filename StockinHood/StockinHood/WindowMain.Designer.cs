@@ -28,23 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.quotesBox1 = new StockinHood.UserControls.QuotesBox();
             this.SuspendLayout();
-            // 
-            // quotesBox1
-            // 
-            this.quotesBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.quotesBox1.Location = new System.Drawing.Point(0, 0);
-            this.quotesBox1.Name = "quotesBox1";
-            this.quotesBox1.Size = new System.Drawing.Size(800, 450);
-            this.quotesBox1.TabIndex = 0;
             // 
             // WindowMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.quotesBox1);
             this.Name = "WindowMain";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -52,8 +42,6 @@
         }
 
         #endregion
-
-        private UserControls.QuotesBox quotesBox1;
     }
 }
 

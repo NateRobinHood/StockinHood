@@ -28,5 +28,9 @@ namespace StockinHood.Components
         public static Color ToolStripEndGradient = Color.FromArgb(110, 110, 110);
 
         public static Color WorkspaceBackground = Color.FromArgb(229, 229, 229);
+
+        public static Color TickDecreaseColor = Color.FromArgb(210, 63, 49);
+        public static Color TickIncreaseColor = Color.FromArgb(15, 157, 88);
+        public static Color StatItemForegroundColor = SystemColors.ControlText;
     }
 }
