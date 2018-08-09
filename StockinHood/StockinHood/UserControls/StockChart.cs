@@ -159,6 +159,13 @@ namespace StockinHood.UserControls
             return retChartData;
         }
 
+        private ChartSeriesData LoadDataForFiveDays(string symbol, IEX_Chart_Multi_Day iexData)
+        {
+            ChartSeriesData retChartData = new ChartSeriesData();
+
+            return retChartData;
+        }
+
         #region Event Handlers
 
         private void ChartPeriod_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
