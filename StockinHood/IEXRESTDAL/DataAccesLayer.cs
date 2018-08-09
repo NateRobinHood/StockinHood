@@ -49,9 +49,29 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Day contentData = JsonConvert.DeserializeObject<IEX_Chart_Day>(content);
+                List<IEX_Chart_Minute_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Minute_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Day contentWrapper = new IEX_Chart_Day();
+                contentWrapper.Minutes = contentData;
+
+                return contentWrapper;
+            }
+
+            return null;
+        }
+
+        public static IEX_Chart_Multi_Day GetChartLastFiveDays(string symbol)
+        {
+            string RequestUri = string.Format("https://api.iextrading.com/1.0/stock/{0}/chart/5d", symbol);
+            string content = MakeRequest(RequestUri);
+            if (!string.IsNullOrEmpty(content))
+            {
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
+
+                IEX_Chart_Multi_Day contentWrapper = new IEX_Chart_Multi_Day();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;
@@ -63,9 +83,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Month contentData = JsonConvert.DeserializeObject<IEX_Chart_Month>(content);
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Month contentWrapper = new IEX_Chart_Month();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;
@@ -77,9 +100,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Month contentData = JsonConvert.DeserializeObject<IEX_Chart_Month>(content);
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Month contentWrapper = new IEX_Chart_Month();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;
@@ -91,9 +117,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Month contentData = JsonConvert.DeserializeObject<IEX_Chart_Month>(content);
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Month contentWrapper = new IEX_Chart_Month();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;
@@ -105,9 +134,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Year contentData = JsonConvert.DeserializeObject<IEX_Chart_Year>(content);
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Year contentWrapper = new IEX_Chart_Year();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;
@@ -119,9 +151,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Year contentData = JsonConvert.DeserializeObject<IEX_Chart_Year>(content);
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Year contentWrapper = new IEX_Chart_Year();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;
@@ -133,9 +168,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Year contentData = JsonConvert.DeserializeObject<IEX_Chart_Year>(content);
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Year contentWrapper = new IEX_Chart_Year();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;
@@ -147,9 +185,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Year contentData = JsonConvert.DeserializeObject<IEX_Chart_Year>(content);
+                List<IEX_Chart_Day_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Day_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Year contentWrapper = new IEX_Chart_Year();
+                contentWrapper.Days = contentData;
+
+                return contentWrapper;
             }
 
             return null;

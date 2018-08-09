@@ -11,6 +11,11 @@ namespace IEXRESTDAL.DataObjects
         public List<IEX_Chart_Minute_Data> Minutes = new List<IEX_Chart_Minute_Data>();
     }
 
+    public class IEX_Chart_Multi_Day
+    {
+        public List<IEX_Chart_Day_Data> Days = new List<IEX_Chart_Day_Data>();
+    }
+
     public class IEX_Chart_Month
     {
         public List<IEX_Chart_Day_Data> Days = new List<IEX_Chart_Day_Data>();

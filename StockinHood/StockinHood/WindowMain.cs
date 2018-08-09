@@ -16,6 +16,7 @@ namespace StockinHood
     {
         private DockPanel m_DockPanel;
         private QuotesDock m_QuotesDock;
+        private ChartDock m_ChartDock;
 
         public WindowMain()
         {
@@ -30,6 +31,9 @@ namespace StockinHood
 
             m_QuotesDock = new QuotesDock();
             m_QuotesDock.Show(m_DockPanel, DockState.Document);
+
+            m_ChartDock = new ChartDock();
+            m_ChartDock.Show(m_DockPanel, DockState.Document);
         }
 
         protected override void OnSizeChanged(EventArgs e)

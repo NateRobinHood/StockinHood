@@ -23,7 +23,7 @@ namespace IEXRESTDAL.DataObjects
         public double marketVolume { get; set; }
         public double marketNotional { get; set; }
         public double marketNumberOfTrades { get; set; }
-        public double changeOverTime { get; set; }
+        public double? changeOverTime { get; set; }
         public double marketChangeOverTime { get; set; }
     }
 

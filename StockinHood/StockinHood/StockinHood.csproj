@@ -63,6 +63,12 @@
     <Compile Include="Components\ToolStripComponents.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DockControls\ChartDock.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DockControls\ChartDock.Designer.cs">
+      <DependentUpon>ChartDock.cs</DependentUpon>
+    </Compile>
     <Compile Include="DockControls\QuotesDock.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +97,12 @@
     <Compile Include="UserControls\StatItem.Designer.cs">
       <DependentUpon>StatItem.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\StockChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\StockChart.Designer.cs">
+      <DependentUpon>StockChart.cs</DependentUpon>
+    </Compile>
     <Compile Include="WindowMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,6 +111,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="DockControls\ChartDock.resx">
+      <DependentUpon>ChartDock.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DockControls\QuotesDock.resx">
       <DependentUpon>QuotesDock.cs</DependentUpon>
     </EmbeddedResource>
@@ -123,6 +138,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\StatItem.resx">
       <DependentUpon>StatItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\StockChart.resx">
+      <DependentUpon>StockChart.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowMain.resx">
       <DependentUpon>WindowMain.cs</DependentUpon>
