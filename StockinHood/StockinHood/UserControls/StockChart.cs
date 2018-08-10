@@ -21,6 +21,7 @@ namespace StockinHood.UserControls
         private string m_Symbol = "atvi";
         private BackgroundWorker m_Worker = new BackgroundWorker();
         private Queue<string> m_Queue = new Queue<string>();
+        private DataPoint m_PreviousDataPoint = null;
 
         public StockChart()
         {
@@ -311,18 +312,28 @@ namespace StockinHood.UserControls
 
         private void chartStockHistory_MouseMove(object sender, MouseEventArgs e)
         {
-            HitTestResult hitTest = chartStockHistory.HitTest(e.X, e.Y, ChartElementType.Gridlines);
+            HitTestResult hitTest = chartStockHistory.HitTest(e.X, e.Y);
 
-            if (hitTest != null && hitTest.Series != null && hitTest.PointIndex < hitTest.Series.Points.Count)
+            if (hitTest != null && hitTest.ChartArea != null)
             {
-                DataPoint thisDataPoint = hitTest.Series.Points[hitTest.PointIndex];
-                if (thisDataPoint != null && thisDataPoint.Tag != null)
+                if (m_PreviousDataPoint != null)
                 {
-                    if (thisDataPoint.Tag is IEX_Chart_Minute_Data)
-                    {
-                        hitTest.Series.Points[hitTest.PointIndex].Label = ((IEX_Chart_Minute_Data)thisDataPoint.Tag).label;
-                    }
+                    m_PreviousDataPoint.MarkerSize = 0;
+                    m_PreviousDataPoint.MarkerStyle = MarkerStyle.None;
+                    m_PreviousDataPoint.Label = string.Empty;
                 }
+
+                double xAxisValue = hitTest.ChartArea.AxisX.PixelPositionToValue(e.X);
+                DataPoint theDataPoint = chartStockHistory.Series[0].Points.OrderBy(c => Math.Abs(xAxisValue - c.XValue)).FirstOrDefault();
+                theDataPoint.MarkerStyle = MarkerStyle.Circle;
+                theDataPoint.MarkerSize = 10;
+
+                if (theDataPoint.Tag is IEX_Chart_Minute_Data)
+                {
+                    theDataPoint.Label = ((IEX_Chart_Minute_Data)theDataPoint.Tag).label;
+                }
+
+                m_PreviousDataPoint = theDataPoint;
             }
         }
 
