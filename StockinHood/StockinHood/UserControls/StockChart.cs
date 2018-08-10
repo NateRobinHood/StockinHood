@@ -126,7 +126,10 @@ namespace StockinHood.UserControls
             foreach (IEX_Chart_Minute_Data minute in iexData.Minutes)
             {
                 if (minute.numberOfTrades == 0)
+                {
+                    minuteCount++;
                     continue;
+                }
 
                 DataPoint candlestickDataPoint = new DataPoint();
                 candlestickDataPoint.SetValueXY(minuteCount, minute.high, minute.low);
@@ -151,7 +154,7 @@ namespace StockinHood.UserControls
             retChartData.YAxisMinimum = iexData.Minutes.Where(c => c.numberOfTrades > 0).Select(c => c.low).Min();
             retChartData.YAxisMaximum = iexData.Minutes.Select(c => c.high).Max();
             retChartData.XAxisMinimum = 0;
-            retChartData.XAxisMaximum = (7 * 60);
+            retChartData.XAxisMaximum = (6.5 * 60);
 
             retChartData.Series.Add(stockSeries);
             retChartData.Series.Add(lineSeries);
