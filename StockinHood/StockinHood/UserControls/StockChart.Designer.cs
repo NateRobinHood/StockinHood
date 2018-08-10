@@ -55,6 +55,7 @@
             this.chartStockHistory.Size = new System.Drawing.Size(334, 223);
             this.chartStockHistory.TabIndex = 0;
             this.chartStockHistory.Text = "chart1";
+            this.chartStockHistory.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chartStockHistory_MouseMove);
             // 
             // lblYearToDate
             // 

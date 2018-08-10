@@ -35,9 +35,12 @@ namespace IEXRESTDAL
             string content = MakeRequest(RequestUri);
             if (!string.IsNullOrEmpty(content))
             {
-                IEX_Chart_Day contentData = JsonConvert.DeserializeObject<IEX_Chart_Day>(content);
+                List<IEX_Chart_Minute_Data> contentData = JsonConvert.DeserializeObject<List<IEX_Chart_Minute_Data>>(content);
 
-                return contentData;
+                IEX_Chart_Day contentWrapper = new IEX_Chart_Day();
+                contentWrapper.Minutes = contentData;
+
+                return contentWrapper;
             }
 
             return null;
