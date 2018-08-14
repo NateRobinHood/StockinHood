@@ -22,6 +22,8 @@ namespace StockinHood.UserControls
         private BackgroundWorker m_Worker = new BackgroundWorker();
         private Queue<string> m_Queue = new Queue<string>();
         private DataPoint m_PreviousDataPoint = null;
+        private StripLine m_PreviousXAxisStripLine = null;
+        private StripLine m_PreviousYAxisStripLine = null;
 
         public StockChart()
         {
@@ -63,17 +65,81 @@ namespace StockinHood.UserControls
 
         private void SetChartStyle(StockChartPeriod period)
         {
+            chartStockHistory.ChartAreas[0].AxisX.Interval = 0;
+            chartStockHistory.ChartAreas[0].AxisX.MajorTickMark.Enabled = false;
+            chartStockHistory.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.NotSet;
+            chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+            chartStockHistory.ChartAreas[0].AxisX.CustomLabels.Clear();
+            chartStockHistory.ChartAreas[0].AxisY.CustomLabels.Clear();
+            chartStockHistory.ChartAreas[0].AxisX.StripLines.Clear();
+            chartStockHistory.ChartAreas[0].AxisY.StripLines.Clear();
+
+            chartStockHistory.ChartAreas[0].AxisY.LabelStyle.Format = "${##.##}";
+
             switch (period)
             {
                 case StockChartPeriod.Today:
                     chartStockHistory.ChartAreas[0].AxisX.Interval = 30;
+                    chartStockHistory.ChartAreas[0].AxisX.MajorTickMark.Enabled = true;
+                    chartStockHistory.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
+                    chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+                    chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+
+                    IEX_Chart_Minute_Data openMinute = chartStockHistory.Series[0].Points.First().Tag as IEX_Chart_Minute_Data;
+                    StripLine openStripLine = new StripLine();
+                    openStripLine.IntervalOffset = openMinute.average;
+                    openStripLine.StripWidth = 0;
+                    openStripLine.BorderDashStyle = ChartDashStyle.Dash;
+                    openStripLine.BorderColor = Color.LightGray;
+                    openStripLine.Text = "Open";
+                    openStripLine.TextAlignment = StringAlignment.Center;
+
+                    chartStockHistory.ChartAreas[0].AxisY.StripLines.Add(openStripLine);
+                    break;
+                case StockChartPeriod.FiveDays:
+                    chartStockHistory.ChartAreas[0].AxisX.Interval = 13;
+                    chartStockHistory.ChartAreas[0].AxisX.MajorTickMark.Enabled = true;
+                    chartStockHistory.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
                     chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
                     chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
                     break;
-                case StockChartPeriod.FiveDays:
-                    chartStockHistory.ChartAreas[0].AxisX.Interval = 14;
-                    chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
-                    chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+                case StockChartPeriod.ThreeMonths:
+                case StockChartPeriod.SixMonths:
+                case StockChartPeriod.YearToDate:
+                    chartStockHistory.ChartAreas[0].AxisX.MajorTickMark.Enabled = false;
+                    chartStockHistory.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+
+                    List<Tuple<DataPoint, IEX_Chart_Day_Data>> seriesData = chartStockHistory.Series[0].Points.Select(c => new Tuple<DataPoint, IEX_Chart_Day_Data>(c,  c.Tag as IEX_Chart_Day_Data)).ToList();
+
+                    double previousAxisValue = 0;
+                    string previousDate = seriesData.First().Item2.date;
+                    foreach (Tuple<DataPoint, IEX_Chart_Day_Data> dayData in seriesData)
+                    {
+                        if (ParsedDate.IsDifferentMonth(previousDate, dayData.Item2.date))
+                        {
+                            int firstOfMonthIdx = chartStockHistory.Series[0].Points.IndexOf(dayData.Item1);
+                            double thisAxisValue = dayData.Item1.XValue;
+
+                            CustomLabel monthLabel = new CustomLabel(previousAxisValue, thisAxisValue, ParsedDate.GetMonthText(previousDate), 0, LabelMarkStyle.None, GridTickTypes.None);
+
+                            chartStockHistory.ChartAreas[0].AxisX.CustomLabels.Add(monthLabel);
+
+                            previousAxisValue = thisAxisValue;
+
+                            StripLine monthStripLine = new StripLine();
+                            monthStripLine.IntervalOffset = firstOfMonthIdx;
+                            monthStripLine.StripWidth = 0;
+                            monthStripLine.BackColor = Color.LightGray;
+                            monthStripLine.BorderDashStyle = ChartDashStyle.Dash;
+                            monthStripLine.BorderColor = Color.LightGray;
+
+                            chartStockHistory.ChartAreas[0].AxisX.StripLines.Add(monthStripLine);
+                        }
+
+                        previousDate = dayData.Item2.date;
+                    }
+
                     break;
             }
         }
@@ -122,10 +188,14 @@ namespace StockinHood.UserControls
             if (chartData is IEX_Chart_Month)
             {
                 IEX_Chart_Month monthData = chartData as IEX_Chart_Month;
+
+                retChartData = LoadDataForMonths(symbol, monthData);
             }
             if (chartData is IEX_Chart_Year)
             {
                 IEX_Chart_Year yearData = chartData as IEX_Chart_Year;
+
+                retChartData = LoadDataForYears(symbol, yearData);
             }
 
             return retChartData;
@@ -276,6 +346,84 @@ namespace StockinHood.UserControls
             return retChartData;
         }
 
+        private ChartSeriesData LoadDataForMonths(string symbol, IEX_Chart_Month iexData)
+        {
+            ChartSeriesData retChartData = new ChartSeriesData();
+
+            Series lineSeries = new Series(string.Format("{0} Price History - Line", symbol));
+
+            lineSeries.ChartType = SeriesChartType.Line;
+            lineSeries.Color = Color.DarkSlateBlue;
+            lineSeries.BorderWidth = 4;
+
+            int dayCount = 1;
+            double minimumAverage = double.MaxValue;
+            double maximumAverage = double.MinValue;
+            foreach (IEX_Chart_Day_Data dayData in iexData.Days)
+            {
+                double dayAverage = (dayData.low + dayData.high) / 2;
+
+                DataPoint dataPoint = new DataPoint();
+                dataPoint.SetValueXY(dayCount, dayAverage);
+                dataPoint.AxisLabel = ParsedDate.FormatMinuteDate(dayData.date);
+                dataPoint.Tag = dayData;
+
+                minimumAverage = minimumAverage > dayAverage ? dayAverage : minimumAverage;
+                maximumAverage = maximumAverage < dayAverage ? dayAverage : maximumAverage;
+
+                lineSeries.Points.Add(dataPoint);
+                dayCount++;
+            }
+
+            retChartData.YAxisMinimum = minimumAverage;
+            retChartData.YAxisMaximum = maximumAverage;
+            retChartData.XAxisMinimum = 0;
+            retChartData.XAxisMaximum = dayCount;
+
+            retChartData.Series.Add(lineSeries);
+
+            return retChartData;
+        }
+
+        private ChartSeriesData LoadDataForYears(string symbol, IEX_Chart_Year iexData)
+        {
+            ChartSeriesData retChartData = new ChartSeriesData();
+
+            Series lineSeries = new Series(string.Format("{0} Price History - Line", symbol));
+
+            lineSeries.ChartType = SeriesChartType.Line;
+            lineSeries.Color = Color.DarkSlateBlue;
+            lineSeries.BorderWidth = 4;
+
+            int dayCount = 1;
+            double minimumAverage = double.MaxValue;
+            double maximumAverage = double.MinValue;
+            foreach (IEX_Chart_Day_Data dayData in iexData.Days)
+            {
+                double dayAverage = (dayData.low + dayData.high) / 2;
+
+                DataPoint dataPoint = new DataPoint();
+                dataPoint.SetValueXY(dayCount, dayAverage);
+                dataPoint.AxisLabel = ParsedDate.FormatMinuteDate(dayData.date);
+                dataPoint.Tag = dayData;
+
+                minimumAverage = minimumAverage > dayAverage ? dayAverage : minimumAverage;
+                maximumAverage = maximumAverage < dayAverage ? dayAverage : maximumAverage;
+
+                lineSeries.Points.Add(dataPoint);
+                dayCount++;
+            }
+
+            retChartData.YAxisMinimum = minimumAverage;
+            retChartData.YAxisMaximum = maximumAverage;
+            retChartData.XAxisMinimum = 0;
+            retChartData.XAxisMaximum = dayCount;
+
+            retChartData.Series.Add(lineSeries);
+
+            return retChartData;
+        }
+
         #region Event Handlers
 
         private void ChartPeriod_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -291,6 +439,14 @@ namespace StockinHood.UserControls
                     thisPeriod = StockChartPeriod.Today;
                 if (lblFiveDays == thisLinkLabel)
                     thisPeriod = StockChartPeriod.FiveDays;
+                if(lblMonth == thisLinkLabel)
+                    thisPeriod = StockChartPeriod.Month;
+                if(lblThreeMonths == thisLinkLabel)
+                    thisPeriod = StockChartPeriod.ThreeMonths;
+                if (lblSixMonths == thisLinkLabel)
+                    thisPeriod = StockChartPeriod.SixMonths;
+                if (lblYearToDate == thisLinkLabel)
+                    thisPeriod = StockChartPeriod.YearToDate;
 
                 ChartSeriesData chartData = LoadData(m_Symbol, thisPeriod);
                 chartStockHistory.Series.Clear();
@@ -322,6 +478,10 @@ namespace StockinHood.UserControls
                     m_PreviousDataPoint.MarkerStyle = MarkerStyle.None;
                     m_PreviousDataPoint.Label = string.Empty;
                 }
+                if (m_PreviousYAxisStripLine != null)
+                {
+                    chartStockHistory.ChartAreas[0].AxisY.StripLines.Remove(m_PreviousYAxisStripLine);
+                }
 
                 double xAxisValue = hitTest.ChartArea.AxisX.PixelPositionToValue(e.X);
                 DataPoint theDataPoint = chartStockHistory.Series[0].Points.OrderBy(c => Math.Abs(xAxisValue - c.XValue)).FirstOrDefault();
@@ -330,7 +490,43 @@ namespace StockinHood.UserControls
 
                 if (theDataPoint.Tag is IEX_Chart_Minute_Data)
                 {
-                    theDataPoint.Label = ((IEX_Chart_Minute_Data)theDataPoint.Tag).label;
+                    IEX_Chart_Minute_Data minuteData = theDataPoint.Tag as IEX_Chart_Minute_Data;
+
+                    theDataPoint.Label = minuteData.label;
+
+                    StripLine yAxisStripLine = new StripLine();
+                    yAxisStripLine.IntervalOffset = minuteData.average;
+                    yAxisStripLine.StripWidth = 0;
+                    yAxisStripLine.BorderColor = Color.LightGray;
+                    yAxisStripLine.BorderDashStyle = ChartDashStyle.Dash;
+                    yAxisStripLine.BorderWidth = 2;
+                    yAxisStripLine.Text = minuteData.average.ToString("$##.##");
+                    yAxisStripLine.TextAlignment = StringAlignment.Near;
+
+                    chartStockHistory.ChartAreas[0].AxisY.StripLines.Add(yAxisStripLine);
+
+                    m_PreviousYAxisStripLine = yAxisStripLine;
+                }
+                if (theDataPoint.Tag is IEX_Chart_Day_Data)
+                {
+                    IEX_Chart_Day_Data dayData = theDataPoint.Tag as IEX_Chart_Day_Data;
+
+                    theDataPoint.Label = dayData.label;
+
+                    double dayAverage = (dayData.low + dayData.high) / 2;
+
+                    StripLine yAxisStripLine = new StripLine();
+                    yAxisStripLine.IntervalOffset = dayAverage;
+                    yAxisStripLine.StripWidth = 0;
+                    yAxisStripLine.BorderColor = Color.LightGray;
+                    yAxisStripLine.BorderDashStyle = ChartDashStyle.Dash;
+                    yAxisStripLine.BorderWidth = 2;
+                    yAxisStripLine.Text = dayAverage.ToString("$##.##");
+                    yAxisStripLine.TextAlignment = StringAlignment.Near;
+
+                    chartStockHistory.ChartAreas[0].AxisY.StripLines.Add(yAxisStripLine);
+
+                    m_PreviousYAxisStripLine = yAxisStripLine;
                 }
 
                 m_PreviousDataPoint = theDataPoint;
@@ -428,7 +624,52 @@ namespace StockinHood.UserControls
 
             public static string FormatMinuteDate(string date)
             {
-                return string.Format("{0}-{1}-{2}", date.Substring(4, 2), date.Substring(6, 2), date.Substring(0, 4));
+                if(date.Contains('-'))
+                    return string.Format("{0}-{1}-{2}", date.Substring(5, 2), date.Substring(8, 2), date.Substring(0, 4));
+                else
+                    return string.Format("{0}-{1}-{2}", date.Substring(4, 2), date.Substring(6, 2), date.Substring(0, 4));
+            }
+
+            public static bool IsDifferentMonth(string date1, string date2)
+            {
+                if (date1.Contains('-'))
+                {
+                    if (date2.Contains('-'))
+                    {
+                        return (date1.Substring(5, 2) != date2.Substring(5, 2));
+                    }
+                    else
+                    {
+                        return (date1.Substring(5, 2) != date2.Substring(4, 2));
+                    }
+                }
+                else
+                {
+                    if (date2.Contains('-'))
+                    {
+                        return (date1.Substring(4, 2) != date2.Substring(5, 2));
+                    }
+                    else
+                    {
+                        return (date1.Substring(4, 2) != date2.Substring(4, 2));
+                    }
+                }
+            }
+
+            public static string GetMonthText(string date)
+            {
+                string[] months = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthGenitiveNames;
+
+                if (date.Contains('-'))
+                {
+                    int monthIdx = int.Parse(date.Substring(5, 2));
+                    return months[monthIdx - 1];
+                }
+                else
+                {
+                    int monthIdx = int.Parse(date.Substring(4, 2));
+                    return months[monthIdx - 1];
+                }
             }
         }
 
