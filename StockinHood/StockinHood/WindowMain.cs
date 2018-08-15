@@ -17,6 +17,7 @@ namespace StockinHood
         private DockPanel m_DockPanel;
         private QuotesDock m_QuotesDock;
         private ChartDock m_ChartDock;
+        private ChartListDock m_ChartListDock;
 
         public WindowMain()
         {
@@ -34,6 +35,18 @@ namespace StockinHood
 
             m_ChartDock = new ChartDock();
             m_ChartDock.Show(m_DockPanel, DockState.Document);
+
+            m_ChartListDock = new ChartListDock();
+            m_ChartListDock.Show(m_DockPanel, DockState.Document);
+            m_ChartListDock.AddSymbol("atvi");
+            m_ChartListDock.AddSymbol("ttwo");
+            m_ChartListDock.AddSymbol("ea");
+            m_ChartListDock.AddSymbol("amd");
+            m_ChartListDock.AddSymbol("nvda");
+            m_ChartListDock.AddSymbol("sne");
+            m_ChartListDock.AddSymbol("glw");
+            m_ChartListDock.AddSymbol("chuy");
+            m_ChartListDock.AddSymbol("gluu");
         }
 
         protected override void OnSizeChanged(EventArgs e)

@@ -52,7 +52,7 @@
             series1.ChartArea = "ChartArea1";
             series1.Name = "Series1";
             this.chartStockHistory.Series.Add(series1);
-            this.chartStockHistory.Size = new System.Drawing.Size(334, 223);
+            this.chartStockHistory.Size = new System.Drawing.Size(337, 226);
             this.chartStockHistory.TabIndex = 0;
             this.chartStockHistory.Text = "chart1";
             this.chartStockHistory.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chartStockHistory_MouseMove);
@@ -61,7 +61,7 @@
             // 
             this.lblYearToDate.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblYearToDate.AutoSize = true;
-            this.lblYearToDate.Location = new System.Drawing.Point(30, 226);
+            this.lblYearToDate.Location = new System.Drawing.Point(31, 229);
             this.lblYearToDate.Name = "lblYearToDate";
             this.lblYearToDate.Size = new System.Drawing.Size(29, 13);
             this.lblYearToDate.TabIndex = 1;
@@ -73,7 +73,7 @@
             // 
             this.lblSixMonths.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblSixMonths.AutoSize = true;
-            this.lblSixMonths.Location = new System.Drawing.Point(65, 226);
+            this.lblSixMonths.Location = new System.Drawing.Point(66, 229);
             this.lblSixMonths.Name = "lblSixMonths";
             this.lblSixMonths.Size = new System.Drawing.Size(51, 13);
             this.lblSixMonths.TabIndex = 2;
@@ -85,7 +85,7 @@
             // 
             this.lblThreeMonths.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblThreeMonths.AutoSize = true;
-            this.lblThreeMonths.Location = new System.Drawing.Point(122, 226);
+            this.lblThreeMonths.Location = new System.Drawing.Point(123, 229);
             this.lblThreeMonths.Name = "lblThreeMonths";
             this.lblThreeMonths.Size = new System.Drawing.Size(51, 13);
             this.lblThreeMonths.TabIndex = 3;
@@ -97,7 +97,7 @@
             // 
             this.lblMonth.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblMonth.AutoSize = true;
-            this.lblMonth.Location = new System.Drawing.Point(179, 226);
+            this.lblMonth.Location = new System.Drawing.Point(180, 229);
             this.lblMonth.Name = "lblMonth";
             this.lblMonth.Size = new System.Drawing.Size(37, 13);
             this.lblMonth.TabIndex = 4;
@@ -109,7 +109,7 @@
             // 
             this.lblFiveDays.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblFiveDays.AutoSize = true;
-            this.lblFiveDays.Location = new System.Drawing.Point(222, 226);
+            this.lblFiveDays.Location = new System.Drawing.Point(223, 229);
             this.lblFiveDays.Name = "lblFiveDays";
             this.lblFiveDays.Size = new System.Drawing.Size(40, 13);
             this.lblFiveDays.TabIndex = 5;
@@ -121,7 +121,7 @@
             // 
             this.lblToday.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lblToday.AutoSize = true;
-            this.lblToday.Location = new System.Drawing.Point(268, 226);
+            this.lblToday.Location = new System.Drawing.Point(269, 229);
             this.lblToday.Name = "lblToday";
             this.lblToday.Size = new System.Drawing.Size(37, 13);
             this.lblToday.TabIndex = 6;
@@ -140,8 +140,9 @@
             this.Controls.Add(this.lblSixMonths);
             this.Controls.Add(this.lblYearToDate);
             this.Controls.Add(this.chartStockHistory);
+            this.MinimumSize = new System.Drawing.Size(300, 250);
             this.Name = "StockChart";
-            this.Size = new System.Drawing.Size(334, 247);
+            this.Size = new System.Drawing.Size(337, 250);
             ((System.ComponentModel.ISupportInitialize)(this.chartStockHistory)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

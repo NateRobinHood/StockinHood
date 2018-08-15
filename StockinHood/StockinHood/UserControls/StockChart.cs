@@ -20,7 +20,7 @@ namespace StockinHood.UserControls
         private StockChartPeriod m_CurrentChartPeriod = StockChartPeriod.Today;
         private string m_Symbol = "atvi";
         private BackgroundWorker m_Worker = new BackgroundWorker();
-        private Queue<string> m_Queue = new Queue<string>();
+        private Queue<Tuple<string, StockChartPeriod>> m_Queue = new Queue<Tuple<string, StockChartPeriod>>();
         private DataPoint m_PreviousDataPoint = null;
         private StripLine m_PreviousXAxisStripLine = null;
         private StripLine m_PreviousYAxisStripLine = null;
@@ -28,6 +28,9 @@ namespace StockinHood.UserControls
         public StockChart()
         {
             InitializeComponent();
+
+            m_Worker.DoWork += M_Worker_DoWork;
+            m_Worker.RunWorkerCompleted += M_Worker_RunWorkerCompleted;
 
             SetLinkColors(lblToday);
 
@@ -50,6 +53,12 @@ namespace StockinHood.UserControls
             chartStockHistory.Titles.Add(string.Format("{0} Price History", m_Symbol));
             chartStockHistory.ChartAreas[0].CursorX.LineDashStyle = ChartDashStyle.Solid;
             chartStockHistory.ChartAreas[0].CursorX.LineColor = Color.Red;
+        }
+
+        //Public Properties
+        public string Symbol
+        {
+            get { return m_Symbol; }
         }
 
         //Private Methods
@@ -86,7 +95,7 @@ namespace StockinHood.UserControls
                     chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
                     chartStockHistory.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
 
-                    IEX_Chart_Minute_Data openMinute = chartStockHistory.Series[0].Points.First().Tag as IEX_Chart_Minute_Data;
+                    IEX_Chart_Minute_Data openMinute = chartStockHistory.Series[0].Points.Select(c => c.Tag as IEX_Chart_Minute_Data).First(c => c.marketNumberOfTrades > 0);
                     StripLine openStripLine = new StripLine();
                     openStripLine.IntervalOffset = openMinute.average;
                     openStripLine.StripWidth = 0;
@@ -205,8 +214,8 @@ namespace StockinHood.UserControls
         {
             ChartSeriesData retChartData = new ChartSeriesData();
 
-            Series stockSeries = new Series(string.Format("{0} Price History - CandleStick", symbol));
-            Series lineSeries = new Series(string.Format("{0} Price History - Line", symbol));
+            Series stockSeries = new Series("Candlestick");
+            Series lineSeries = new Series("Line");
 
             stockSeries.ChartType = SeriesChartType.Stock;
             stockSeries.YValuesPerPoint = 2;
@@ -219,22 +228,22 @@ namespace StockinHood.UserControls
             IEX_Chart_Minute_Data previousMinute = iexData.Minutes.FirstOrDefault();
             foreach (IEX_Chart_Minute_Data minute in iexData.Minutes)
             {
-                if (minute.numberOfTrades == 0)
+                if (minute.marketVolume <= 0)
                 {
                     minuteCount++;
                     continue;
                 }
 
                 DataPoint candlestickDataPoint = new DataPoint();
-                candlestickDataPoint.SetValueXY(minuteCount, minute.high, minute.low);
+                candlestickDataPoint.SetValueXY(minuteCount, minute.marketHigh, minute.marketLow);
                 candlestickDataPoint.AxisLabel = minute.label;
                 candlestickDataPoint.Tag = minute;
-                if (previousMinute?.average > minute?.average)
+                if (previousMinute?.marketAverage > minute?.marketAverage)
                 {
                     candlestickDataPoint.BorderColor = ColorManager.TickDecreaseColor;
                     candlestickDataPoint.Color = ColorManager.TickDecreaseColor;
                 }
-                else if (previousMinute?.average < minute?.average)
+                else if (previousMinute?.marketAverage < minute?.marketAverage)
                 {
                     candlestickDataPoint.BorderColor = ColorManager.TickIncreaseColor;
                     candlestickDataPoint.Color = ColorManager.TickIncreaseColor;
@@ -243,7 +252,7 @@ namespace StockinHood.UserControls
                 stockSeries.Points.Add(candlestickDataPoint);
 
                 DataPoint lineDataPoint = new DataPoint();
-                lineDataPoint.SetValueXY(minuteCount, minute.average);
+                lineDataPoint.SetValueXY(minuteCount, minute.marketAverage);
                 lineDataPoint.AxisLabel = minute.label;
                 lineDataPoint.Tag = minute;
 
@@ -253,8 +262,8 @@ namespace StockinHood.UserControls
                 previousMinute = minute;
             }
 
-            retChartData.YAxisMinimum = iexData.Minutes.Where(c => c.numberOfTrades > 0).Select(c => c.low).Min();
-            retChartData.YAxisMaximum = iexData.Minutes.Select(c => c.high).Max();
+            retChartData.YAxisMinimum = iexData.Minutes.Where(c => c.marketNumberOfTrades > 0).Select(c => c.marketLow).Min();
+            retChartData.YAxisMaximum = iexData.Minutes.Where(c => c.marketNumberOfTrades > 0).Select(c => c.marketHigh).Max();
             retChartData.XAxisMinimum = 0;
             retChartData.XAxisMaximum = (6.5 * 60);
 
@@ -279,7 +288,7 @@ namespace StockinHood.UserControls
 
             List<ParsedDate> sortedDates = mulitDayMinuteData.Keys.OrderBy(c => c).ToList();
 
-            Series lineSeries = new Series(string.Format("{0} Price History - Line", symbol));
+            Series lineSeries = new Series("Line");
 
             lineSeries.ChartType = SeriesChartType.Line;
             lineSeries.Color = Color.DarkSlateBlue;
@@ -292,48 +301,48 @@ namespace StockinHood.UserControls
             {
                 IEX_Chart_Day dayData = mulitDayMinuteData[sortedDates[i]];
 
-                IEX_Chart_Minute_Data firstDataPoint = dayData.Minutes.First(c => c.numberOfTrades != 0);
+                IEX_Chart_Minute_Data firstDataPoint = dayData.Minutes.First(c => c.marketNumberOfTrades > 0);
 
                 DataPoint dataPointFirst = new DataPoint();
-                dataPointFirst.SetValueXY(thirtyMinuteIncriment, firstDataPoint.average);
+                dataPointFirst.SetValueXY(thirtyMinuteIncriment, firstDataPoint.marketAverage);
                 dataPointFirst.AxisLabel = ParsedDate.FormatMinuteDate(firstDataPoint.date);
                 dataPointFirst.Tag = firstDataPoint;
 
                 lineSeries.Points.Add(dataPointFirst);
                 thirtyMinuteIncriment++;
 
-                minimumAverage = minimumAverage > firstDataPoint.average ? firstDataPoint.average : minimumAverage;
-                maximumAverage = maximumAverage < firstDataPoint.average ? firstDataPoint.average : maximumAverage;
+                minimumAverage = minimumAverage > firstDataPoint.marketAverage ? firstDataPoint.marketAverage : minimumAverage;
+                maximumAverage = maximumAverage < firstDataPoint.marketAverage ? firstDataPoint.marketAverage : maximumAverage;
 
                 //don't go to the end of the day, go to 30 minutes before the end
                 for (int minute = 30; minute < dayData.Minutes.Count - 30; minute += 30)
                 {
-                    IEX_Chart_Minute_Data dataPoint = dayData.Minutes.Skip(minute).First(c => c.numberOfTrades != 0);
+                    IEX_Chart_Minute_Data dataPoint = dayData.Minutes.Skip(minute).First(c => c.marketNumberOfTrades > 0);
 
                     DataPoint dataPointIncrement = new DataPoint();
-                    dataPointIncrement.SetValueXY(thirtyMinuteIncriment, dataPoint.average);
+                    dataPointIncrement.SetValueXY(thirtyMinuteIncriment, dataPoint.marketAverage);
                     dataPointIncrement.AxisLabel = ParsedDate.FormatMinuteDate(dataPoint.date);
                     dataPointIncrement.Tag = dataPoint;
 
                     lineSeries.Points.Add(dataPointIncrement);
                     thirtyMinuteIncriment++;
 
-                    minimumAverage = minimumAverage > dataPoint.average ? dataPoint.average : minimumAverage;
-                    maximumAverage = maximumAverage < dataPoint.average ? dataPoint.average : maximumAverage;
+                    minimumAverage = minimumAverage > dataPoint.marketAverage ? dataPoint.marketAverage : minimumAverage;
+                    maximumAverage = maximumAverage < dataPoint.marketAverage ? dataPoint.marketAverage : maximumAverage;
                 }
 
-                IEX_Chart_Minute_Data lastDataPoint = dayData.Minutes.Last(c => c.numberOfTrades != 0);
+                IEX_Chart_Minute_Data lastDataPoint = dayData.Minutes.Last(c => c.marketNumberOfTrades > 0);
 
                 DataPoint dataPointLast = new DataPoint();
-                dataPointLast.SetValueXY(thirtyMinuteIncriment, firstDataPoint.average);
+                dataPointLast.SetValueXY(thirtyMinuteIncriment, firstDataPoint.marketAverage);
                 dataPointLast.AxisLabel = ParsedDate.FormatMinuteDate(lastDataPoint.date);
                 dataPointLast.Tag = lastDataPoint;
 
                 lineSeries.Points.Add(dataPointLast);
                 thirtyMinuteIncriment++;
 
-                minimumAverage = minimumAverage > lastDataPoint.average ? lastDataPoint.average : minimumAverage;
-                maximumAverage = maximumAverage < lastDataPoint.average ? lastDataPoint.average : maximumAverage;
+                minimumAverage = minimumAverage > lastDataPoint.marketAverage ? lastDataPoint.marketAverage : minimumAverage;
+                maximumAverage = maximumAverage < lastDataPoint.marketAverage ? lastDataPoint.marketAverage : maximumAverage;
             }
 
             retChartData.YAxisMinimum = minimumAverage;
@@ -350,7 +359,7 @@ namespace StockinHood.UserControls
         {
             ChartSeriesData retChartData = new ChartSeriesData();
 
-            Series lineSeries = new Series(string.Format("{0} Price History - Line", symbol));
+            Series lineSeries = new Series("Line");
 
             lineSeries.ChartType = SeriesChartType.Line;
             lineSeries.Color = Color.DarkSlateBlue;
@@ -389,7 +398,7 @@ namespace StockinHood.UserControls
         {
             ChartSeriesData retChartData = new ChartSeriesData();
 
-            Series lineSeries = new Series(string.Format("{0} Price History - Line", symbol));
+            Series lineSeries = new Series("Line");
 
             lineSeries.ChartType = SeriesChartType.Line;
             lineSeries.Color = Color.DarkSlateBlue;
@@ -422,6 +431,30 @@ namespace StockinHood.UserControls
             retChartData.Series.Add(lineSeries);
 
             return retChartData;
+        }
+
+        //Public Methods
+        public void SetSymbol(string symbol)
+        {
+            m_Symbol = symbol;
+            chartStockHistory.Titles.Clear();
+            chartStockHistory.Titles.Add(string.Format("{0} Price History", m_Symbol));
+
+            ChartSeriesData chartData = LoadData(m_Symbol, m_CurrentChartPeriod);
+            chartStockHistory.Series.Clear();
+
+            foreach (Series data in chartData.Series)
+            {
+                chartStockHistory.Series.Add(data);
+            }
+
+            chartStockHistory.ChartAreas[0].RecalculateAxesScale();
+            chartStockHistory.ChartAreas[0].AxisX.Minimum = chartData.XAxisMinimum;
+            chartStockHistory.ChartAreas[0].AxisX.Maximum = chartData.XAxisMaximum;
+            chartStockHistory.ChartAreas[0].AxisY.Minimum = chartData.YAxisMinimum;
+            chartStockHistory.ChartAreas[0].AxisY.Maximum = chartData.YAxisMaximum;
+
+            SetChartStyle(m_CurrentChartPeriod);
         }
 
         #region Event Handlers
@@ -484,7 +517,7 @@ namespace StockinHood.UserControls
                 }
 
                 double xAxisValue = hitTest.ChartArea.AxisX.PixelPositionToValue(e.X);
-                DataPoint theDataPoint = chartStockHistory.Series[0].Points.OrderBy(c => Math.Abs(xAxisValue - c.XValue)).FirstOrDefault();
+                DataPoint theDataPoint = chartStockHistory.Series["Line"].Points.OrderBy(c => Math.Abs(xAxisValue - c.XValue)).FirstOrDefault();
                 theDataPoint.MarkerStyle = MarkerStyle.Circle;
                 theDataPoint.MarkerSize = 10;
 
@@ -531,6 +564,14 @@ namespace StockinHood.UserControls
 
                 m_PreviousDataPoint = theDataPoint;
             }
+        }
+
+        private void M_Worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+        }
+
+        private void M_Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
         }
 
         #endregion
